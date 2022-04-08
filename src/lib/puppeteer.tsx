@@ -24,11 +24,26 @@ export interface CreatePageImageOptions {
 	width: number, height: number
 }
 
-export async function createPageImage (options: CreatePageImageOptions, response: NextApiResponse, element: ReactElement<any>) {
+export async function createPageImage (options: CreatePageImageOptions, response: NextApiResponse, element: ReactElement<any>, head?: ReactElement<any>) {
 	const browser = await getBrowser();
 	const page = await browser.newPage();
 
-	await page.setContent(renderToString(element));
+	await page.setContent(renderToString(<html>
+		<head>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<script src="https://cdn.tailwindcss.com"/>
+			<style>{`
+				body: {
+					font-family: Verdana, Geneva, DejaVu Sans, sans-serif;
+					-webkit-font-smoothing: antialiased;
+					-moz-osx-font-smoothing: grayscale;
+					text-rendering: optimizeLegibility;
+				}
+			`}</style>
+			{head}
+		</head>
+		{element}
+	</html>));
 
 	await page.setViewport({
 		width: options.width, 

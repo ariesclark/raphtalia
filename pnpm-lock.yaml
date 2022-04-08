@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@octokit/types': ^6.34.0
   '@types/ms': ^0.7.31
   '@types/node': 17.0.23
   '@types/react': 18.0.0
@@ -27,6 +28,7 @@ dependencies:
   react-syntax-highlighter: 15.5.0_react@18.0.0
 
 devDependencies:
+  '@octokit/types': 6.34.0
   '@types/ms': 0.7.31
   '@types/node': 17.0.23
   '@types/react': 18.0.0
@@ -225,6 +227,16 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
+    dev: true
+
+  /@octokit/openapi-types/11.2.0:
+    resolution: {integrity: sha512-PBsVO+15KSlGmiI8QAzaqvsNlZlrDlyAJYcrXBCvVUxCp7VnXjkwPoFHgjEJXx3WF9BAwkA6nfCUA7i9sODzKA==}
+    dev: true
+
+  /@octokit/types/6.34.0:
+    resolution: {integrity: sha512-s1zLBjWhdEI2zwaoSgyOFoKSl109CUcVBCc7biPJ3aAf6LGLU6szDvi31JPU7bxfla2lqfhjbbg/5DdFNxOwHw==}
+    dependencies:
+      '@octokit/openapi-types': 11.2.0
     dev: true
 
   /@rushstack/eslint-patch/1.0.8:

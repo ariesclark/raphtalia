@@ -7,5 +7,10 @@ module.exports = {
   ],
   parserOptions: {
     tsconfigRootDir: __dirname,
+  },
+  rules: {
+    "@next/next/no-img-element": "off",
+    "@next/next/no-sync-scripts": "off",
+    "@next/next/no-head-element": "off"
   }
 }
