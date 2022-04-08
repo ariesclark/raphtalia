@@ -52,7 +52,7 @@ export default async function (request: NextApiRequest, response: NextApiRespons
 					{validCommits.map((object: any) => {
 						const { commit, sha } = object;
 						
-						const commitAuthorName = commit.author.name;
+						const commitAuthorName = object.author?.login || commit.author.name.toLowerCase().replace(/ /, "");
 						const commitAuthorAvatar = object.author?.avatar_url || "https://github.com/identicons/default.png";
 						const commitDate = commit.author?.date || commit.committer.date;
 
