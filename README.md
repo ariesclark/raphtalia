@@ -1,1 +1,1 @@
-![GitHub image](https://raphtalia.ariesclark.com/github/ariesclark/raphtalia/banner)
+[![GitHub image](https://raphtalia.ariesclark.com/github/ariesclark/raphtalia/banner)](https://raphtalia.ariesclark.com)
