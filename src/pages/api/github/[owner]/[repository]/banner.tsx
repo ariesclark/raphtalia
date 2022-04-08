@@ -26,7 +26,8 @@ export default async function (request: NextApiRequest, response: NextApiRespons
 	
 	const repository = await github(`repos/${fullRepositoryName}`);
 	const commits: Array<any> = await github(`repos/${fullRepositoryName}/commits`);
-	console.log({repository, commits})
+	
+	response.setHeader("Cache-Control", "public, max-age=3600, immutable");
 
 	await createPageImage({
 		width: 1250,
@@ -39,8 +40,8 @@ export default async function (request: NextApiRequest, response: NextApiRespons
 				body: {
 					font-family: Verdana, Geneva, DejaVu Sans, sans-serif;
 					-webkit-font-smoothing: antialiased;
-    				-moz-osx-font-smoothing: grayscale;
-    				text-rendering: optimizeLegibility;
+					-moz-osx-font-smoothing: grayscale;
+					text-rendering: optimizeLegibility;
 				}
 			`}</style>
 		</head>
