@@ -27,7 +27,7 @@ export default async function (request: NextApiRequest, response: NextApiRespons
 	const repository = await github(`repos/${fullRepositoryName}`);
 	const commits: Array<any> = await github(`repos/${fullRepositoryName}/commits`);
 	const validCommits = commits.filter(({ commit }: any) => !commit.message.toLowerCase().includes("merge branch")).slice(0, 8);
-	
+
 	response.setHeader("Cache-Control", "public, max-age=3600, immutable");
 
 	await createPageImage({
@@ -49,22 +49,29 @@ export default async function (request: NextApiRequest, response: NextApiRespons
 		<body className="w-screen h-screen overflow-hidden bg-black text-neutral-100">
 			<div className="flex flex-col w-screen h-screen overflow-hidden">
 				<div className={`absolute flex flex-col ${validCommits.length >= 8 ? "justify-between" : "justify-start"} w-full h-screen p-4 overflow-hidden filter gap-y-2`}>
-					{validCommits.map(({ sha, commit, author }: any) => (
-						<div key={sha} className="flex flex-col font-mono whitespace-nowrap">
-							<div className="flex space-x-2 ">
-								<img className="h-5 my-auto rounded-full" src={author.avatar_url}/>
-								<div className="space-x-2">
-									<span className="text-green-500 ">{author.login}</span>
-									<span className="text-amber-200">{getRelativeDuration(commit.author.date)} ago</span>
-									<span className="text-sm text-neutral-500">({sha})</span>
+					{validCommits.map((object: any) => {
+						const { commit, sha } = object;
+						
+						const commitAuthorName = commit.author.name;
+						const commitAuthorAvatar = object.author?.avatar_url || "https://github.com/identicons/default.png";
+						const commitDate = commit.author?.date || commit.committer.date;
+
+						return (
+							<div key={sha} className="flex flex-col font-mono whitespace-nowrap">
+								<div className="flex space-x-2 ">
+									<img className="h-5 my-auto rounded-full" src={commitAuthorAvatar}/>
+									<div className="space-x-2">
+										<span className="text-green-500 ">{commitAuthorName}</span>
+										<span className="text-amber-200">{getRelativeDuration(commitDate)} ago</span>
+										<span className="text-sm text-neutral-500">({sha})</span>
+									</div>
 								</div>
+								<span className="">{commit.message.length >= 128 
+									? `${commit.message.slice(0, 128)}...` 
+									: commit.message
+								}</span>
 							</div>
-							<span className="">{commit.message.length >= 128 
-								? `${commit.message.slice(0, 128)}...` 
-								: commit.message
-							}</span>
-						</div>
-					))
+						);})
 					}
 				</div>
 				<div className="absolute top-0 right-0 p-4">
