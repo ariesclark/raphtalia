@@ -15,14 +15,14 @@ interface CopyableSectionProps { name: string, content: string }
 const CopyableSection: React.VFC<CopyableSectionProps> = ({ name, content }) => (
 	<div className="flex flex-col space-y-2">
 		<div className="flex space-x-4">
-			<span>{name}</span>
+			<span className="my-auto text-sm text-neutral-300">{name}</span>
 			<button
 				onClick={() => navigator.clipboard.writeText(content)} 
-				className="px-2 text-sm border border-neutral-700 bg-neutral-800"
+				className="px-2 text-xs border border-neutral-700 bg-neutral-800 text-neutral-400"
 			>copy</button>
 		</div>
 		<div className="w-full p-4 bg-black border border-neutral-700">
-			<pre className="break-words whitespace-normal">{content}</pre>
+			<pre className="text-xs break-words whitespace-normal">{content}</pre>
 		</div>
 	</div>
 );
@@ -52,14 +52,14 @@ const Input: React.VFC<InputProps> = (props) => {
 	return (
 		<div className={`group flex flex-col w-full space-y-2 flex-grow overflow-hidden ${props.rootClassName}`}>
 			<label className="flex space-x-2">
-				<span className="whitespace-nowrap">{props.label}</span>
-				{props.hint && <span className="mt-auto text-sm text-neutral-500 whitespace-nowrap">{props.hint}</span>}
+				<span className="text-sm whitespace-nowrap">{props.label}</span>
+				{props.hint && <span className="mt-auto text-xs text-neutral-500 whitespace-nowrap">{props.hint}</span>}
 			</label>
 			<div className={`flex p-2 border bg-neutral-800 ${errored ? "border-red-400" : "border-neutral-700 group-focus:border-white"}`}>
 				<input
 					value={props.value}
 					onChange={(event) => onChangeInternal(event.target.value)}
-					className="w-full bg-transparent outline-none appearance-none"
+					className="w-full text-sm bg-transparent outline-none appearance-none"
 				/>
 			</div>
 		</div>
@@ -74,7 +74,7 @@ interface CheckboxProps {
 
 const Checkbox: React.VFC<CheckboxProps> = (props) => (
 	<div className="flex flex-col space-y-2">
-		<label className="flex h-6 space-x-2">
+		<label className="flex h-4 space-x-2">
 			{props.label && <span className="whitespace-nowrap">{props.label}</span>}
 		</label>
 		<div className="flex">
@@ -97,11 +97,11 @@ interface SelectProps {
 
 const Select: React.VFC<SelectProps> = (props) => (
 	<div className="flex flex-col w-64 space-y-2">
-		<label>{props.label}</label>
+		<label className="text-sm">{props.label}</label>
 		<select
 			value={props.value}
 			onChange={(event) => props.onChange(event.target.value)}
-			className="p-2 border outline-none appearance-none border-neutral-700 bg-neutral-800 focus:border-white"
+			className="p-2 text-sm border outline-none appearance-none border-neutral-700 bg-neutral-800 focus:border-white"
 		>
 			{props.options.map((value) => (
 				<option key={value}>{value}</option>
@@ -215,7 +215,7 @@ const providerImpl: {[K in Provider]: React.VFC<ImplProps>} = {
 							hint="optional"
 						/>
 					</div>
-					<p className="w-full text-neutral-400">
+					<p className="w-full text-xs text-neutral-400">
 						Your username and access token are encrypted in your browser using a public key.
 						Access tokens are used for authenticating to GitHub and letting you view private repositories.
 						<br/><br/>
@@ -256,16 +256,16 @@ export const RootIndexPage: NextPage = () => {
 			<div className="flex p-4 space-x-2 border-b border-neutral-700">
 				<img alt="Best girl" className="h-24" src="/RaphNom.png"/>
 				<div className="flex flex-col">
-					<h1 className="text-4xl font-bold">Raphtalia</h1>
-					<span className="text-neutral-300">An image generator / data aggregator?</span>
+					<h1 className="text-2xl font-bold">Raphtalia</h1>
+					<span className="text-sm text-neutral-300">An image generator / data aggregator?</span>
 					<div className="flex mt-3 space-x-4 text-xs text-neutral-400">
 						<Link href="https://github.com/ariesclark/raphtalia">
-							<a className="hover:text-white hover:before:content-['»_'] hover:after:content-['_«']" target="_blank">
+							<a className="hover:text-white" target="_blank">
 								View source code
 							</a>
 						</Link>
 						<Link href="https://ariesclark.com">
-							<a className="hover:text-white hover:before:content-['»_'] hover:after:content-['_«']" target="_blank">
+							<a className="hover:text-white" target="_blank">
 								Visit personal website
 							</a>
 						</Link>
