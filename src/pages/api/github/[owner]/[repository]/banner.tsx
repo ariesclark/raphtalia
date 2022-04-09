@@ -61,7 +61,7 @@ export default async function (request: NextApiRequest & { query: RequestQuery }
 	const commits = await github<"GET /repos/{owner}/{repo}/commits">(`repos/${fullRepositoryName}/commits`);
 	const validCommits = commits.filter(({ commit }) => !commit.message.toLowerCase().includes("merge branch")).slice(0, 8);
 	
-	// response.setHeader("Cache-Control", "public, max-age=3600, immutable");
+	response.setHeader("Cache-Control", "public, max-age=3600, immutable");
 
 	await createPageImage({
 		width: 1250,
