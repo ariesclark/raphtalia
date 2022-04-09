@@ -12,19 +12,56 @@ async function github <T extends keyof Endpoints> (path: string): Promise<Endpoi
 			Authorization: `Basic ${Buffer.from(credentials).toString("base64")}`,
 			"User-Agent": "raphtalia.ariesclark.com"
 		}
-	}).then((response) => response.json()) as Promise<Endpoints[T]["response"]>;
+	}).then(async (response) => {
+		if (!response.ok) throw await response.json();
+		return response.json() as Promise<Endpoints[T]["response"]>;
+	});
 }
 
 
 const getRelativeDuration = (date: string) => ms(Date.now() - new Date(date).getTime(), { long: true });
 
-export default async function (request: NextApiRequest, response: NextApiResponse) {
-	const fullRepositoryName = `${request.query.owner}/${request.query.repository}`;
+interface RequestQuery {
+	owner: string,
+	repository: string
+	image?: string | null,
+	imageHeight?: number,
+	title?: string,
+	subtitle?: string
+}
+
+export default async function (request: NextApiRequest & { query: RequestQuery }, response: NextApiResponse) {
+	console.log(request.query)
+	const repository = await github<"GET /repos/{owner}/{repo}">(
+		`repos/${request.query.owner}/${request.query.repository}`
+	).catch((reason) => {
+		if (reason.message.toLowerCase().includes("not found")) {
+			response.status(404).send("repository not found");
+			return;
+		}
+
+		console.error("request failed", reason);
+		response.status(500).send("internal server error");
+	});
+
+	if (!repository) return;
 	
-	const repository = await github<"GET /repos/{owner}/{repo}">(`repos/${fullRepositoryName}`);
+	const query: Required<RequestQuery> = {
+		owner: request.query.owner,
+		repository: request.query.repository,
+
+		image: request.query.image || null,
+		imageHeight: request.query.imageHeight || 64,
+		title: request.query.title === "null" ? "" : request.query.title || `${request.query.owner}/${request.query.repository}`,
+		subtitle: request.query.subtitle === "null" ? "" : repository.description || ""
+	};
+
+	const fullRepositoryName = `${query.owner}/${query.repository}`;
+	
 	const commits = await github<"GET /repos/{owner}/{repo}/commits">(`repos/${fullRepositoryName}/commits`);
 	const validCommits = commits.filter(({ commit }) => !commit.message.toLowerCase().includes("merge branch")).slice(0, 8);
-	response.setHeader("Cache-Control", "public, max-age=3600, immutable");
+	
+	// response.setHeader("Cache-Control", "public, max-age=3600, immutable");
 
 	await createPageImage({
 		width: 1250,
@@ -67,8 +104,9 @@ export default async function (request: NextApiRequest, response: NextApiRespons
 				</div>
 				<div className="z-10 flex h-full space-y-2" style={{ background: "radial-gradient(circle at center, rgba(0, 0, 0) 0, transparent 100%)" }}>
 					<div className="flex flex-col m-auto">
-						<h1 className="text-6xl font-medium text-center">{repository.full_name}</h1>
-						<span className="max-w-md mx-auto text-2xl text-center">{repository.description}</span>
+						{query.image && <img alt="" className={`mb-4 w-fit mx-auto h-[${query.imageHeight}]`} src={query.image} />}
+						{query.title && <h1 className="mb-2 text-6xl font-medium text-center">{query.title}</h1>}
+						{query.subtitle && <span className="max-w-md mx-auto text-2xl text-center">{query.subtitle}</span>}
 					</div>
 				</div>
 			</div>

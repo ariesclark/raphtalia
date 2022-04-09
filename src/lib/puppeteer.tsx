@@ -24,7 +24,12 @@ export interface CreatePageImageOptions {
 	width: number, height: number
 }
 
-export async function createPageImage (options: CreatePageImageOptions, response: NextApiResponse, element: ReactElement<any>, head?: ReactElement<any>) {
+export async function createPageImage (
+	options: CreatePageImageOptions, 
+	response: NextApiResponse, 
+	element: ReactElement<any>, 
+	head?: ReactElement<any>
+) {
 	const browser = await getBrowser();
 	const page = await browser.newPage();
 
