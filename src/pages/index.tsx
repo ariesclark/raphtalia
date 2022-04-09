@@ -22,7 +22,7 @@ const CopyableSection: React.VFC<CopyableSectionProps> = ({ name, content }) => 
 			>copy</button>
 		</div>
 		<div className="w-full p-4 bg-black border border-neutral-700">
-			<pre className="text-xs break-words whitespace-normal">{content}</pre>
+			<p className="font-mono text-xs whitespace-normal" style={{wordWrap: "anywhere" as any}}>{content}</p>
 		</div>
 	</div>
 );
@@ -272,7 +272,7 @@ export const RootIndexPage: NextPage = () => {
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-grow">
+			<div className="flex flex-col flex-grow w-full overflow-x-hidden lg:flex-row">
 				<div className="flex flex-col w-full h-full">
 					<div className="flex flex-col gap-4 p-4 pb-6 border-b border-neutral-700">
 						<Select
@@ -286,9 +286,9 @@ export const RootIndexPage: NextPage = () => {
 						<ProviderImpl onChange={onChangeDebounced}/>
 					</div>
 				</div>
-				<div className="w-full border-l border-neutral-700">
+				<div className="w-full border-t lg:border-t-0 lg:border-l border-neutral-700">
 					<div className="">
-						<img alt="Image preview" src={url}/>
+						<img className="w-full" alt="Image preview" src={url}/>
 					</div>
 					<div className="flex flex-col p-4 space-y-4 border-t border-neutral-700">
 						<CopyableSection name="Plain URL" content={fullUrl}/>
