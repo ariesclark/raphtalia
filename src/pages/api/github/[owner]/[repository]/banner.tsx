@@ -53,7 +53,7 @@ export default async function (request: NextApiRequest & { query: RequestQuery }
 		image: request.query.image || null,
 		imageHeight: request.query.imageHeight || 64,
 		title: request.query.title === "null" ? "" : request.query.title || `${request.query.owner}/${request.query.repository}`,
-		subtitle: request.query.subtitle === "null" ? "" : repository.description || ""
+		subtitle: request.query.subtitle === "null" ? "" : request.query.subtitle || repository.description || ""
 	};
 
 	const fullRepositoryName = `${query.owner}/${query.repository}`;
