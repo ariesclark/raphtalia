@@ -1,9 +1,6 @@
-/* eslint-disable require-atomic-updates */
-import { NextApiResponse } from "next";
-import { JSXElementConstructor, ReactElement } from "react";
-import { renderToString } from "react-dom/server";
+import type { Browser, Page, Viewport } from "puppeteer";
 
-async function getBrowser () {
+export async function getBrowser(): Promise<Browser> {
 	if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 		const { default: chromium } = await import("chrome-aws-lambda");
 
@@ -13,50 +10,26 @@ async function getBrowser () {
 			executablePath: await chromium.executablePath,
 			headless: true,
 			ignoreHTTPSErrors: true
-		});
+		}) as unknown as Browser;
 	} else {
 		const { default: puppeteer } = await import("puppeteer");
 		return puppeteer.launch({ headless: true });
 	}
 }
 
-export interface CreatePageImageOptions {
-	width: number, height: number
+export type DoPuppeteerFunction = (page: Page) => Promise<void>;
+export interface DoPuppeteerOptions {
+	url?: URL;
+	viewport?: Viewport;
 }
 
-export async function createPageImage (
-	options: CreatePageImageOptions, 
-	response: NextApiResponse, 
-	element: ReactElement<any>, 
-	head?: ReactElement<any>
-) {
+export async function doPuppeteer(fn: DoPuppeteerFunction, opts: DoPuppeteerOptions) {
 	const browser = await getBrowser();
 	const page = await browser.newPage();
+	if (opts.url) await page.goto(opts.url.toString());
 
-	await page.setContent(renderToString(<html>
-		<head>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<script src="https://cdn.tailwindcss.com"/>
-			<style>{`
-				body: {
-					font-family: Verdana, Geneva, DejaVu Sans, sans-serif;
-					-webkit-font-smoothing: antialiased;
-					-moz-osx-font-smoothing: grayscale;
-					text-rendering: optimizeLegibility;
-				}
-			`}</style>
-			{head}
-		</head>
-		{element}
-	</html>));
+	await page.setViewport(opts.viewport || { width: 1920, height: 1080 });
+	await fn(page);
 
-	await page.setViewport({
-		width: options.width, 
-		height: options.height
-	});
-
-	response.setHeader("Content-Type", "image/png");
-	response.send(await page.screenshot({ type: "png", encoding: "binary" }));
-
-	await page.close();
+	await browser.close();
 }
